@@ -1,5 +1,10 @@
 import random as rd
+import logging as log
 
+log.basicConfig(filename='logging.log',
+                filemode='a',
+                level = log.INFO,
+                format='%(process)s - %(levelname)s - %(message)s')
 
 class Node:
 
@@ -70,6 +75,12 @@ class Node:
             target.connected = True
             print("CONNECTION : ", target, ' [TEMPS : ', self.env.now, ']')
 
+        elif target.id_node == entree_dht.id_node or target.id_node == entree_dht.left_neighbour.id_node \
+            or target.id_node == entree_dht.right_neighbour.id_node :
+            ajout = rd.randint(1, 5)
+            print(f"MODIFICATION : Noeud {target.id_node} ({target.id_simpy}) devient {target.id_node + ajout} [TEMPS : {self.env.now}]")
+            target.id_node = target.id_node + ajout
+
         elif not target.connected:
             if target.id_node > entree_dht.right_neighbour.id_node:
                 target.send_message("Insertion", entree_dht.right_neighbour)
@@ -79,6 +90,7 @@ class Node:
                 target.send_message("Insertion", entree_dht.left_neighbour)
                 print('INFO SYSTEM : ' + str(self.id_node) + ' envoi ' + str(target.id_node) + ' à gauche vers ' + str(
                     entree_dht.left_neighbour.id_node) + ' [TEMPS : ' + str(self.env.now) + ']')
+        
 
     def insert(self, entree_dht, a_connecter=None):
         if a_connecter is None:
@@ -87,7 +99,6 @@ class Node:
             self.verify(a_connecter, entree_dht)
 
     def receive(self, message):
-        #todo system d'acquitement si message a en entete flag down ou up appeler la fonction en question et renvoyer un message de réponse et une fois les message q'acuitement recu on lancer la fonctio insert et apres
         self.queue.append(message)
 
     def send_message(self, message, neighbour):
