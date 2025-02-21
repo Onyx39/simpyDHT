@@ -1,8 +1,3 @@
-# Personnal files
-car_example.py
-
-
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

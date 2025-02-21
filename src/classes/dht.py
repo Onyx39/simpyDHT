@@ -1,17 +1,33 @@
-import simpy
+"""
+Classe représentant la DHT
+"""
+
 import random as rd
+
+import simpy
 from classes.node import Node
 
 
 class Dht:
+    """
+    Classe DHT
+
+    Attributs :
+        env (simpy.Environment) : environnement de simulation
+        array_node (list[Node]) : la liste des noeuds
+        id_compteur (int) : un compteur pour numéroter les noeuds
+    """
 
     def __init__(self):
-        self.env = simpy.Environment()
-        self.array_node = []
-        self.id_compteur = 0
+        self.env : simpy.Environment = simpy.Environment()
+        self.array_node : list[Node] = []
+        self.id_compteur : int = 0
         self.start()
 
-    def start(self):
+    def start(self) -> None:
+        """
+        Initialise la DHT
+        """
 
         n0 = Node(self.env, 0, 80)
         n1 = Node(self.env, 1, 6)
@@ -33,17 +49,27 @@ class Dht:
         for node in self.array_node:
             node.connected = True
 
+        self.insert_nodes(20)
 
-        for _ in range (20) :
+    def insert_nodes(self, nb_nodes) -> None:
+        """
+        Insère des noeuds aléatoirement dans la DHT
+        """
+
+        for _ in range (nb_nodes) :
             id_node = rd.randint(1, 100)
             self.id_compteur = self.id_compteur + 1
             entree = self.get_random_connected_node()
-            new_node = Node(env=self.env, id_simpy=self.id_compteur, id_node=id_node, entree_dht=entree)
+            new_node = Node(env=self.env,
+                            id_simpy=self.id_compteur,
+                            id_node=id_node,
+                            entree_dht=entree)
             self.array_node.append(new_node)
 
-        return self.array_node
-
-    def get_random_connected_node(self):
+    def get_random_connected_node(self) -> Node:
+        """
+        Renvoie un noeud au hasard déja inséré dans le DHT
+        """
         index = None
         node = None
         while node is None:
